@@ -10,8 +10,9 @@ import json
 from scrapy import signals
 
 
-JSON_FILE_PATH = "dst_data.json"
-
+JSON_FILE_PATH = "/Users/manavkumardubey/Desktop/projects/Fundscraper/fundscraper/data/dst_data.json"
+def check_send_email():
+    print("Email sent successfully")
 def send_email(data):
     # Email configuration
     sender_email = "dubeymanavkumar@gmail.com"  # Replace with your email address
@@ -58,7 +59,8 @@ if os.path.exists(JSON_FILE_PATH):
         previous_data = json.load(json_file)
 else:
     previous_data = []
-
+print("PREV---PREV---PREV---PREV---PREV---PREV---PREV---PREV---PREV---PREV---PREV---PREV---PREV---")
+print(previous_data)
 # Create a global list to store all scraped data
 combined_data = []
 
@@ -96,9 +98,31 @@ class DstgovSpider(scrapy.Spider):
         if reason == 'finished':
             # Check for new entries
             new_entries = [entry for entry in self.scraped_data if entry not in previous_data]
+            print("NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---NEW---")
+            print(new_entries)
+            print("COMP----COMP----COMP----COMP----COMP----COMP----COMP----COMP----COMP----COMP----COMP----") 
+            # Check for new entries
+            new_entries = [entry for entry in self.scraped_data if entry not in previous_data]
+
+            # Check for removed entries (entries that were in previous_data but not in scraped_data)
+            removed_entries = [entry for entry in previous_data if entry not in self.scraped_data]
+
+            # Update the combined_data list with the latest scraped data
+            combined_data = self.scraped_data
+
+            # Save the combined data to the JSON file
+            with open(JSON_FILE_PATH, 'w') as json_file:
+                json.dump(combined_data, json_file)
+
+            # Print or perform any action you want based on the differences
             if new_entries:
+                print("New entries detected:", new_entries)
+            if removed_entries:
+                print("Removed entries detected:", removed_entries)
+
+            if len(new_entries):
                 combined_data.extend(new_entries)
                 # Save the combined data to the JSON file
                 with open(JSON_FILE_PATH, 'w') as json_file:
                     json.dump(combined_data, json_file)
-                send_email(new_entries)
+                check_send_email()

@@ -3,10 +3,13 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import pandas as pd
-
+import os
+import json
 from scrapy import signals
 from fundscraper.items import DbtItem
 
+
+JSON_FILE_PATH = "/Users/manavkumardubey/Desktop/projects/Fundscraper/fundscraper/data/dbt_data.json"
 
 def send_email(data):
     # Email configuration
@@ -47,6 +50,16 @@ def send_email(data):
     except Exception as e:
         print("Error sending email:", str(e))
 
+# Load previously scraped data from the JSON file, if it exists
+if os.path.exists(JSON_FILE_PATH):
+    with open(JSON_FILE_PATH, 'r') as json_file:
+        previous_data = json.load(json_file)
+else:
+    previous_data = [] 
+
+# Create a global list to store all scraped data
+combined_data = []       
+
 class DbtindiaSpider(scrapy.Spider):
     name = "dbtindia"
     allowed_domains = ["dbtindia.gov.in"]
@@ -80,4 +93,12 @@ class DbtindiaSpider(scrapy.Spider):
 
     def spider_closed(self, reason):
         if reason == 'finished':
-            send_email(self.scraped_data)
+            # Check for new entries
+            new_entries = [entry for entry in self.scraped_data if entry not in previous_data]
+            if new_entries:
+                combined_data.extend(new_entries)
+                # Save the combined data to the JSON file
+                with open(JSON_FILE_PATH, 'w') as json_file:
+                    json.dump(combined_data, json_file)
+                send_email(new_entries)
+
