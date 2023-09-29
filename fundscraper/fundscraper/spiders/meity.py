@@ -9,36 +9,58 @@ import pandas as pd
 from scrapy import signals
 
 
+# Store previously scraped data in a file (you can use a database as well)
+PREVIOUS_DATA_FILE = 'data/meity_data.csv'
+
+def load_previous_data():
+    try:
+        return pd.read_csv(PREVIOUS_DATA_FILE)
+    except FileNotFoundError:
+        return pd.DataFrame(columns=["Name", "URL"])
+
+def save_current_data(data):
+    df = pd.DataFrame(data, columns=["Name", "URL"])
+    df.to_csv(PREVIOUS_DATA_FILE, index=False)
 
 def send_email(data):
-    # Email configuration
-    sender_email = "dubeymanavkumar@gmail.com"  # Replace with your email address
-    sender_password = "yhcg wvpl yotu pngq"  # Replace with your email password
-    receiver_email = "dmanavkumar24@gmail.com"  # Replace with the recipient's email address
-    smtp_server = "smtp.gmail.com"  # Use the appropriate SMTP server for your email provider
-    smtp_port = 587  # Use the appropriate SMTP port for your email provider
+    # Load previously scraped data
+    previous_data = load_previous_data()
 
-    # Convert data to a DataFrame
-    df = pd.DataFrame(data, columns=["Name", "URL"])
+    # Create a set of unique URLs from previous data
+    previous_urls = set(previous_data["URL"])
 
-    # Create the HTML content of the email
+    # Find new entries by comparing with previous data
+    new_entries = [entry for entry in data if entry["URL"] not in previous_urls]
+
+    if not new_entries:
+        print("No new entries found. Email not sent.")
+        return
+
+    # Email configuration (same as before)
+    sender_email = "dubeymanavkumar@gmail.com"
+    sender_password = "yhcg wvpl yotu pngq"
+    receiver_email = "dmanavkumar24@gmail.com"
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+
+    # Create the HTML content of the email (same as before)
     html_content = f"""
     <html>
     <body>
-        <h2>Scraped Data</h2>
-        {df.to_html(index=False, escape=False)}
+        <h2>New Scraped Data</h2>
+        {pd.DataFrame(new_entries, columns=["Name", "URL"]).to_html(index=False, escape=False)}
     </body>
     </html>
     """
 
-    # Create the MIMEText object with HTML content
+    # Create the MIMEText object with HTML content (same as before)
     message = MIMEMultipart("alternative")
     message["From"] = sender_email
     message["To"] = receiver_email
-    message["Subject"] = "Scraped Data"
+    message["Subject"] = "New Scraped Data"
     message.attach(MIMEText(html_content, "html"))
 
-    # Connect to the SMTP server and send the email
+    # Connect to the SMTP server and send the email (same as before)
     try:
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
@@ -48,7 +70,6 @@ def send_email(data):
         print("Email sent successfully.")
     except Exception as e:
         print("Error sending email:", str(e))
-
 
 
 
@@ -68,8 +89,12 @@ class MeitySpider(scrapy.Spider):
             
             if meity_item['name'] is not None and url is not None:
                 meity_item['url'] = 'www.meity.gov.in' + url
-                self.scraped_data.append((meity_item['name'], meity_item['url']))
-                yield meity_item
+            self.scraped_data.append({
+                                "Name": meity_item['name'],
+                                "URL": meity_item['url'],
+                                
+                            })                 
+            yield meity_item
 
 
         next_page = response.css('li.pager-next a::attr(href)').get()
@@ -85,3 +110,4 @@ class MeitySpider(scrapy.Spider):
     def spider_closed(self, reason):
         if reason == 'finished':
             send_email(self.scraped_data)
+            save_current_data(self.scraped_data)
