@@ -1,0 +1,4 @@
+smtplib
+email
+pandas
+scrapy
