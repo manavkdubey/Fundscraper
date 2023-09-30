@@ -2,7 +2,7 @@ import subprocess
 import time
 
 # List of your Scrapy spider names
-spider_names = ['dstgov', 'dbtindia','amazon','birac']  # Add your spider names here
+spider_names = ['dstgov', 'dbtindia','amazon','birac','dbtindia','icmr','meity','ngobox','ngoboxgrants','onlinedst','pfizer']  # Add your spider names here
 
 while True:
     for spider_name in spider_names:

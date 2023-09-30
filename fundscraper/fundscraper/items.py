@@ -72,6 +72,24 @@ class ngoItem(scrapy.Item):
     title = scrapy.Field()
     organization = scrapy.Field()
     deadline = scrapy.Field()
-    url = scrapy.Field()
+    URL = scrapy.Field()
+
+class ICMRItem(scrapy.Item):
+    Sr_No = scrapy.Field()
+    Title = scrapy.Field()
+    Last_Date = scrapy.Field()
+    Link_to_apply = scrapy.Field()
+    Document = scrapy.Field()
+class OnlinedstfirstItem(scrapy.Item):
+    serial_number = scrapy.Field()
+    programme_or_scheme = scrapy.Field()
+    division = scrapy.Field()
+    start_date = scrapy.Field()
+    end_date = scrapy.Field()
+
+class onlinedstsecondItem(scrapy.Item):
+    serial_number = scrapy.Field()
+    programme_or_scheme = scrapy.Field()
+    division = scrapy.Field()
     
 

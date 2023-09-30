@@ -1,50 +1,13 @@
 import scrapy
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-import pandas as pd
 from scrapy import signals
 from fundscraper.items import PfizerItem
+from fundscraper.spiders.send_email import send_email,load_previous_data,save_current_data
 
-def send_email(data):
-    # Email configuration
-    sender_email = "dubeymanavkumar@gmail.com" # Replace with your email address
-    sender_password = "yhcg wvpl yotu pngq" # Replace with your email password
-    receiver_email = "dmanavkumar24@gmail.com" # Replace with the recipient's email address
-    smtp_server = "smtp.gmail.com" # Use the appropriate SMTP server for your email provider
-    smtp_port = 587 # Use the appropriate SMTP port for your email provider
-    
-    # Convert data to a DataFrame
-    df = pd.DataFrame(data, columns=["Title", "Release_Date","Review_Process","Grant_Type","Focus_Area","Country","Application_Due_Date","PDF_Link"])
-    
-    # Create the HTML content of the email
-    html_content = f"""
-    <html>
-        <body>
-            <h2>Scraped Data</h2>
-            {df.to_html(index=False, escape=False)}
-        </body>
-    </html>
-    """
-    
-    # Create the MIMEText object with HTML content
-    message = MIMEMultipart("alternative")
-    message["From"] = sender_email
-    message["To"] = receiver_email
-    message["Subject"] = "Scraped Data"
-    message.attach(MIMEText(html_content, "html"))
-    
-    # Connect to the SMTP server and send the email
-    try:
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        server.login(sender_email, sender_password)
-        server.sendmail(sender_email, receiver_email, message.as_string())
-        server.quit()
-        print("Email sent successfully.")
-    except Exception as e:
-        print("Error sending email:", str(e))
 
+# Store previously scraped data in a file (you can use a database as well)
+PREVIOUS_DATA_FILE = 'data/pfizer_data.csv'
+columns=["Title","Release_Date","Review_Process","Grant_Type","Focus_Area","Country","Application_Due_Date","PDF_Link"]
+load_previous_data(PREVIOUS_DATA_FILE,columns)
 class PfizerSpider(scrapy.Spider):
     name = "pfizer"
     allowed_domains = ["www.pfizer.com"]
@@ -69,7 +32,14 @@ class PfizerSpider(scrapy.Spider):
             item['PDF_Link'] = row.css('a.clinical-link::attr(href)').get()
             
             
-            self.scraped_data.append((item['Title'], item['Release_Date'], item['Review_Process'], item['Grant_Type'], item['Focus_Area'], item['Country'], item['Application_Due_Date'], item['PDF_Link']))
+            self.scraped_data.append({'Title':item['Title'], 
+                                      'Release_Date':item['Release_Date'], 
+                                      'Review_Process':item['Review_Process'],
+                                       'Grant_Type':item['Grant_Type'],
+                                        'Focus_Area':item['Focus_Area'], 
+                                        'Country':item['Country'], 
+                                        'Application_Due_Date':item['Application_Due_Date'],
+                                        'PDF_Link':item['PDF_Link']})
             yield item
     
     @classmethod
@@ -80,5 +50,6 @@ class PfizerSpider(scrapy.Spider):
     
     def spider_closed(self, reason):
         if reason == 'finished':
-            send_email(self.scraped_data)
+            send_email(self.scraped_data,columns,"Title",PREVIOUS_DATA_FILE,"Pfizer Updates")
+            save_current_data(self.scraped_data,PREVIOUS_DATA_FILE,columns)
         

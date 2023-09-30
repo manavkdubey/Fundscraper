@@ -3,25 +3,25 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import pandas as pd
 
-def load_previous_data(PREVIOUS_DATA_FILE):
+def load_previous_data(PREVIOUS_DATA_FILE,columns):
     try:
         return pd.read_csv(PREVIOUS_DATA_FILE)
     except FileNotFoundError:
-        return pd.DataFrame(columns=["Name", "URL", "End Date"])
+        return pd.DataFrame(columns=columns)
 
-def save_current_data(data,PREVIOUS_DATA_FILE):
-    df = pd.DataFrame(data, columns=["Name", "URL", "End Date"])
+def save_current_data(data,PREVIOUS_DATA_FILE,columns):
+    df = pd.DataFrame(data, columns=columns)
     df.to_csv(PREVIOUS_DATA_FILE, index=False)
 
-def send_email(data,PREVIOUS_DATA_FILE):
+def send_email(data,columns,x,PREVIOUS_DATA_FILE,email_subject):
     # Load previously scraped data
-    previous_data = load_previous_data(PREVIOUS_DATA_FILE)
+    previous_data = load_previous_data(PREVIOUS_DATA_FILE,columns)
 
     # Create a set of unique URLs from previous data
-    previous_urls = set(previous_data["URL"])
+    previous_urls = set(previous_data[x])
 
     # Find new entries by comparing with previous data
-    new_entries = [entry for entry in data if entry["URL"] not in previous_urls]
+    new_entries = [entry for entry in data if entry[x] not in previous_urls]
 
     if not new_entries:
         print("No new entries found. Email not sent.")
@@ -38,8 +38,8 @@ def send_email(data,PREVIOUS_DATA_FILE):
     html_content = f"""
     <html>
     <body>
-        <h2>New Scraped Data</h2>
-        {pd.DataFrame(new_entries, columns=["Name", "URL", "End Date"]).to_html(index=False, escape=False)}
+        <h2>{email_subject}</h2>
+        {pd.DataFrame(new_entries, columns=columns).to_html(index=False, escape=False)}
     </body>
     </html>
     """
@@ -48,7 +48,7 @@ def send_email(data,PREVIOUS_DATA_FILE):
     message = MIMEMultipart("alternative")
     message["From"] = sender_email
     message["To"] = receiver_email
-    message["Subject"] = "New Scraped Data"
+    message["Subject"] = email_subject
     message.attach(MIMEText(html_content, "html"))
 
     # Connect to the SMTP server and send the email (same as before)
