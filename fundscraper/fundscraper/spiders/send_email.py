@@ -13,9 +13,23 @@ def save_current_data(data,PREVIOUS_DATA_FILE,columns):
     df = pd.DataFrame(data, columns=columns)
     df.to_csv(PREVIOUS_DATA_FILE, index=False)
 
-def send_email(data,columns,x,PREVIOUS_DATA_FILE,email_subject):
+def load_email_config(config_file):
+    try:
+        with open(config_file, 'r') as f:
+            config = json.load(f)
+            return config.get("sender_email"), config.get("sender_password"), config.get("receiver_email")
+    except FileNotFoundError:
+        print(f"Config file '{config_file}' not found.")
+        return None, None, None
+    
+email_config_file = "data/email_config_file.json"
+
+# Load email configuration from JSON file
+sender_email, sender_password, receiver_email = load_email_config(email_config_file)
+
+def send_email(data, columns, x, PREVIOUS_DATA_FILE, email_subject):
     # Load previously scraped data
-    previous_data = load_previous_data(PREVIOUS_DATA_FILE,columns)
+    previous_data = load_previous_data(PREVIOUS_DATA_FILE, columns)
 
     # Create a set of unique URLs from previous data
     previous_urls = set(previous_data[x])
@@ -27,10 +41,11 @@ def send_email(data,columns,x,PREVIOUS_DATA_FILE,email_subject):
         print("No new entries found. Email not sent.")
         return
 
-    # Email configuration (same as before)
-    sender_email = "dubeymanavkumar@gmail.com"
-    sender_password = "yhcg wvpl yotu pngq"
-    receiver_email = "dmanavkumar24@gmail.com"
+
+    if sender_email is None or sender_password is None or receiver_email is None:
+        print("Email configuration is incomplete. Email not sent.")
+        return
+
     smtp_server = "smtp.gmail.com"
     smtp_port = 587
 
