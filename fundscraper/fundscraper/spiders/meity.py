@@ -5,7 +5,7 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/meity_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/meity_data.csv'
 columns=["Name", "URL"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 
@@ -25,10 +25,10 @@ class MeitySpider(scrapy.Spider):
             url = entry.css('td.views-field-title a::attr(href)').get()
             
             if meity_item['name'] is not None and url is not None:
-                meity_item['url'] = 'www.meity.gov.in' + url
+                meity_item['URL'] = 'www.meity.gov.in' + url
             self.scraped_data.append({
                                 "Name": meity_item['name'],
-                                "URL": meity_item['url'],
+                                "URL": meity_item['URL'],
                                 
                             })                 
             yield meity_item

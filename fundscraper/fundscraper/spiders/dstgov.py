@@ -8,7 +8,7 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/dstgov_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/dstgov_data.csv'
 columns=["Name", "URL"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 
@@ -28,10 +28,10 @@ class DstgovSpider(scrapy.Spider):
             url = entry.css('div span a::attr(href)').get()
             
             if dst_item['name'] is not None and url is not None:
-                dst_item['url'] = 'https://dst.gov.in' + url
+                dst_item['URL'] = 'https://dst.gov.in' + url
             self.scraped_data.append({
                                 "Name": dst_item['name'],
-                                "URL": dst_item['url'],
+                                "URL": dst_item['URL'],
                                 
                             })                
             yield dst_item

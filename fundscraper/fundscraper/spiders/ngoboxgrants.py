@@ -9,7 +9,7 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/ngoboxgrants_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/ngoboxgrants_data.csv'
 columns=["Title","organization","deadline","URL"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 

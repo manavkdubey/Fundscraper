@@ -6,7 +6,7 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/birac_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/birac_data.csv'
 columns=["call_for_proposal", "URL","call_status","start_date","last_submission_date"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 
@@ -26,13 +26,13 @@ class BiracSpider(scrapy.Spider):
             birac_item = BiracItem()
             birac_item['sno'] = row.css('td.sorting_1::text').get()
             birac_item['call_for_proposal'] = row.css('td a::text').get().strip()
-            birac_item['url']='https://www.birac.nic.in/'+row.css('td a::attr(href)').get()
+            birac_item['URL']='https://www.birac.nic.in/'+row.css('td a::attr(href)').get()
             birac_item['call_status'] = row.css('td small.text-red::text').get()
             birac_item['start_date'] = row.css('td small.text-green::text').get()
             birac_item['last_submission_date'] = row.css('td small.text-red.pull-right::text')
             self.scraped_data.append({
                     "call_for_proposal":  birac_item['call_for_proposal'], 
-                    "URL": birac_item['url'],
+                    "URL": birac_item['URL'],
                     "call_status":  birac_item['call_status'],
                     "start_date": birac_item['start_date'],
                     "last_submission_date": birac_item['last_submission_date']

@@ -4,7 +4,7 @@ from scrapy import signals
 from fundscraper.spiders.send_email import send_email,load_previous_data,save_current_data
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/ngobox_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/ngobox_data.csv'
 columns=["Title","organization","deadline","URL"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 class NgoboxSpider(scrapy.Spider):

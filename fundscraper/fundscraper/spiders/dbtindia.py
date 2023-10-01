@@ -4,7 +4,7 @@ from fundscraper.items import DbtItem
 from fundscraper.spiders.send_email import send_email,load_previous_data,save_current_data
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/previous_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/previous_data.csv'
 columns=["Name", "URL", "End Date"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 class DbtindiaSpider(scrapy.Spider):
@@ -23,10 +23,10 @@ class DbtindiaSpider(scrapy.Spider):
             dbt_item['end_date'] = entry.css('td.views-field-field-start-date span ::text').get()
 
             if dbt_item['name'] is not None and url is not None and dbt_item['end_date'] is not None:
-                dbt_item['url'] = 'https://dbtindia.gov.in/latest-announcement' + url
+                dbt_item['URL'] = 'https://dbtindia.gov.in/latest-announcement' + url
                 self.scraped_data.append({
                     "Name": dbt_item['name'],
-                    "URL": dbt_item['url'],
+                    "URL": dbt_item['URL'],
                     "End Date": dbt_item['end_date']
                 })
                 yield dbt_item

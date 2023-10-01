@@ -2,6 +2,7 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import pandas as pd
+import json
 
 def load_previous_data(PREVIOUS_DATA_FILE,columns):
     try:
@@ -22,7 +23,7 @@ def load_email_config(config_file):
         print(f"Config file '{config_file}' not found.")
         return None, None, None
     
-email_config_file = "data/email_config_file.json"
+email_config_file = "email_config_file.json"
 
 # Load email configuration from JSON file
 sender_email, sender_password, receiver_email = load_email_config(email_config_file)

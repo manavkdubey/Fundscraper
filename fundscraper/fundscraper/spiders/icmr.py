@@ -4,7 +4,7 @@ from fundscraper.items import ICMRItem
 from fundscraper.spiders.send_email import send_email,load_previous_data,save_current_data
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/icmr_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/icmr_data.csv'
 columns=["Sr_No","Title","Last_Date","Link_to_apply","Document"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 class IcmrSpider(scrapy.Spider):

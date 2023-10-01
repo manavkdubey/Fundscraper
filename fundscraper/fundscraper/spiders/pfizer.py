@@ -5,7 +5,7 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = 'data/pfizer_data.csv'
+PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/pfizer_data.csv'
 columns=["Title","Release_Date","Review_Process","Grant_Type","Focus_Area","Country","Application_Due_Date","PDF_Link"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 class PfizerSpider(scrapy.Spider):

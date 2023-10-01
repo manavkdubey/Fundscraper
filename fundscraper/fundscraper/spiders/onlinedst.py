@@ -5,8 +5,8 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE1 = 'data/onlinedst_data1.csv'
-PREVIOUS_DATA_FILE2 = 'data/onlinedst_data2.csv'
+PREVIOUS_DATA_FILE1 = '~/.config/fundscraper/data/onlinedst_data1.csv'
+PREVIOUS_DATA_FILE2 = '~/.config/fundscraper/data/onlinedst_data2.csv'
 columns1=["serial_number","programme_or_scheme","division","start_date","end_date"]
 columns2=["serial_number","programme_or_scheme","division"]
 load_previous_data(PREVIOUS_DATA_FILE1,columns1)
