@@ -8,7 +8,7 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/dstgov_data.csv'
+PREVIOUS_DATA_FILE = 'fundscraper/data/dstgov_data.csv'
 columns=["Name", "URL"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 

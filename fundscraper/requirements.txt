@@ -1,4 +1,0 @@
-smtplib
-email
-pandas
-scrapy

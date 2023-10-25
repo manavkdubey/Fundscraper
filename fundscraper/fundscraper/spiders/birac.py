@@ -6,7 +6,7 @@ from fundscraper.spiders.send_email import send_email,load_previous_data,save_cu
 
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/birac_data.csv'
+PREVIOUS_DATA_FILE = 'fundscraper/data/birac_data.csv'
 columns=["call_for_proposal", "URL","call_status","start_date","last_submission_date"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 

@@ -23,7 +23,7 @@ def load_email_config(config_file):
         print(f"Config file '{config_file}' not found.")
         return None, None, None
     
-email_config_file = "email_config_file.json"
+email_config_file = "fundscraper/data/email_config_file.json"
 
 # Load email configuration from JSON file
 sender_email, sender_password, receiver_email = load_email_config(email_config_file)

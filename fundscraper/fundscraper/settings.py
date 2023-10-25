@@ -9,23 +9,15 @@
 
 BOT_NAME = "fundscraper"
 
+
+TELNETCONSOLE_PORT = [6023, 6073]
+
 SPIDER_MODULES = ["fundscraper.spiders"]
 NEWSPIDER_MODULE = "fundscraper.spiders"
 
 # settings.py
 
-SPIDER_MIDDLEWARES = {
-    'scrapy_splash.SplashDeduplicateArgsMiddleware': 100,
-}
 
-DOWNLOADER_MIDDLEWARES = {
-    'scrapy_splash.SplashCookiesMiddleware': 723,
-    'scrapy_splash.SplashMiddleware': 725,
-    'scrapy.downloadermiddlewares.httpcompression.HttpCompressionMiddleware': 810,
-}
-
-SPLASH_URL = 'http://localhost:8050'  # Assuming Splash is running on the default address
-DUPEFILTER_CLASS = 'scrapy_splash.SplashAwareDupeFilter'
 
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent

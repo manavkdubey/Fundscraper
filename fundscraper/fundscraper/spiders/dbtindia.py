@@ -4,7 +4,7 @@ from fundscraper.items import DbtItem
 from fundscraper.spiders.send_email import send_email,load_previous_data,save_current_data
 
 # Store previously scraped data in a file (you can use a database as well)
-PREVIOUS_DATA_FILE = '~/.config/fundscraper/data/previous_data.csv'
+PREVIOUS_DATA_FILE = 'fundscraper/data/previous_data.csv'
 columns=["Name", "URL", "End Date"]
 load_previous_data(PREVIOUS_DATA_FILE,columns)
 class DbtindiaSpider(scrapy.Spider):
